@@ -6,6 +6,7 @@ import com.planner.TaskPlanner.Payload.TaskDto;
 import com.planner.TaskPlanner.Payload.TaskResponse;
 import com.planner.TaskPlanner.Repository.TaskRepository;
 import com.planner.TaskPlanner.Service.TaskService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,14 +15,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 @Service
 public class TaskServiceImpl implements TaskService {
 
     private TaskRepository taskRepository;
+    private ModelMapper modelMapper;
 
     @Autowired
-    public TaskServiceImpl(TaskRepository taskRepository) {
+    public TaskServiceImpl(TaskRepository taskRepository, ModelMapper modelMapper) {
         this.taskRepository = taskRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -39,6 +43,7 @@ public class TaskServiceImpl implements TaskService {
         return mapToDto(task);
 
     }
+
     @Override
     public TaskResponse getAllTasks(int pageNo, int pageSize, String sortBy, String sortOrder) {
         Sort sort = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
@@ -69,28 +74,13 @@ public class TaskServiceImpl implements TaskService {
     }
 
 
-
     private TaskDto mapToDto(Tasks task) {
-
-        TaskDto taskDto = new TaskDto();
-        taskDto.setId(task.getId());
-        taskDto.setDescription(task.getDescription());
-        taskDto.setProject_id(task.getProject_id());
-        taskDto.setStatus(task.getStatus());
-        taskDto.setName(task.getName());
-
+        TaskDto taskDto = modelMapper.map(task, TaskDto.class);
         return taskDto;
     }
 
     private Tasks mapToEntity(TaskDto taskDto) {
-
-        Tasks task = new Tasks();
-        task.setId(taskDto.getId());
-        task.setDescription(taskDto.getDescription());
-        task.setProject_id(taskDto.getProject_id());
-        task.setStatus(taskDto.getStatus());
-        task.setName(taskDto.getName());
-
+        Tasks task = modelMapper.map(taskDto, Tasks.class);
         return task;
     }
 }

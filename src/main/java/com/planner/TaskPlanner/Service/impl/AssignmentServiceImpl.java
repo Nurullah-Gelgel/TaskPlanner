@@ -5,6 +5,7 @@ import com.planner.TaskPlanner.Payload.AssignmentDto;
 import com.planner.TaskPlanner.Payload.AssignmentResponse;
 import com.planner.TaskPlanner.Repository.AssignmentsRepository;
 import com.planner.TaskPlanner.Service.AssignmentService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,9 +18,11 @@ import java.util.stream.Collectors;
 public class AssignmentServiceImpl implements AssignmentService {
 
     private AssignmentsRepository assignmentsRepository;
+    private ModelMapper modelMapper;
     @Autowired
-    public AssignmentServiceImpl(AssignmentsRepository assignmentsRepository) {
+    public AssignmentServiceImpl(AssignmentsRepository assignmentsRepository, ModelMapper modelMapper) {
         this.assignmentsRepository = assignmentsRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -65,20 +68,12 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     private AssignmentDto mapToDto(Assignments assignment) {
-        AssignmentDto assignmentDto = new AssignmentDto();
-        assignmentDto.setId(assignment.getId());
-        assignmentDto.setRole(assignment.getRole());
-        assignmentDto.setProject_id(assignment.getProject_id());
-        assignmentDto.setUser_id(assignment.getUser_id());
-        return assignmentDto;
+       AssignmentDto assignmentDto = modelMapper.map(assignment, AssignmentDto.class);
+         return assignmentDto;
     }
 
     private Assignments mapToEntity(AssignmentDto assignmentDto) {
-        Assignments assignment = new Assignments();
-        assignment.setId(assignmentDto.getId());
-        assignment.setRole(assignmentDto.getRole());
-        assignment.setProject_id(assignmentDto.getProject_id());
-        assignment.setUser_id(assignmentDto.getUser_id());
-        return assignment;
+      Assignments assignment = modelMapper.map(assignmentDto, Assignments.class);
+      return assignment;
     }
 }

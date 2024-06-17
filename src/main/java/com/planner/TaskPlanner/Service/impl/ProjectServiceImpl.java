@@ -5,6 +5,7 @@ import com.planner.TaskPlanner.Repository.ProjectRepository;
 import com.planner.TaskPlanner.Entities.Projects;
 import com.planner.TaskPlanner.Payload.ProjectResponse;
 import com.planner.TaskPlanner.Service.ProjectService;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,16 +17,19 @@ import java.util.stream.Collectors;
 public class ProjectServiceImpl implements ProjectService {
 
     private ProjectRepository projectRepository;
+    private ModelMapper modelMapper;
 
-    public ProjectServiceImpl(ProjectRepository projectRepository) {
+    public ProjectServiceImpl(ProjectRepository projectRepository, ModelMapper modelMapper) {
         this.projectRepository = projectRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
     public ProjectDto createProject(ProjectDto projectDto) {
-        Projects projects = new Projects();
+        Projects projects = mapToEntity(projectDto);
         Projects newProject = projectRepository.save(projects);
-        return mapToDto(newProject);
+        ProjectDto projectResponse = mapToDto(newProject);
+        return projectResponse;
     }
 
     @Override
@@ -63,20 +67,12 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     private ProjectDto mapToDto(Projects projects) {
-        ProjectDto projectDto = new ProjectDto();
-        projectDto.setId(projects.getId());
-        projectDto.setName(projects.getName());
-        projectDto.setDescription(projects.getDescription());
-
+        ProjectDto projectDto = modelMapper.map(projects, ProjectDto.class);
         return projectDto;
     }
 
     private Projects mapToEntity(ProjectDto projectDto) {
-        Projects projects = new Projects();
-        projects.setId(projectDto.getId());
-        projects.setName(projectDto.getName());
-        projects.setDescription(projectDto.getDescription());
-
+        Projects projects = modelMapper.map(projectDto, Projects.class);
         return projects;
     }
 }

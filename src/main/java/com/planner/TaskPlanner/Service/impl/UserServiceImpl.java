@@ -6,6 +6,7 @@ import com.planner.TaskPlanner.Payload.UserDto;
 import com.planner.TaskPlanner.Payload.UserResponse;
 import com.planner.TaskPlanner.Repository.UserRepository;
 import com.planner.TaskPlanner.Service.UserService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,10 +20,12 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
+    private ModelMapper modelMapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper) {
         this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -73,22 +76,18 @@ public class UserServiceImpl implements UserService {
     }
 
     private UserDto mapToDto(Users user) {
-        UserDto userDto = new UserDto();
-        userDto.setId(user.getId());
-        userDto.setUsername(user.getUsername());
-        userDto.setPassword(user.getPassword());
-        userDto.setEmail(user.getEmail());
-        userDto.setRole(user.getRole());
+        UserDto userDto = modelMapper.map(user, UserDto.class);
+//        UserDto userDto = new UserDto();
+//        userDto.setId(user.getId());
+//        userDto.setUsername(user.getUsername());
+//        userDto.setPassword(user.getPassword());
+//        userDto.setEmail(user.getEmail());
+//        userDto.setRole(user.getRole());
         return userDto;
     }
 
     private Users mapToEntity(UserDto userDto) {
-        Users user = new Users();
-        user.setId(userDto.getId());
-        user.setUsername(userDto.getUsername());
-        user.setPassword(userDto.getPassword());
-        user.setEmail(userDto.getEmail());
-        user.setRole(userDto.getRole());
-        return user;
+        Users users = modelMapper.map(userDto, Users.class);
+        return users;
     }
 }
