@@ -5,6 +5,7 @@ import com.planner.TaskPlanner.Payload.TaskResponse;
 import com.planner.TaskPlanner.Service.TaskService;
 import com.planner.TaskPlanner.utils.AppConstants;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,14 +31,18 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getTaskById(id));
     }
     @PostMapping("/create")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TaskDto> createTask(@RequestBody TaskDto taskDto) {
         return ResponseEntity.ok(taskService.createTask(taskDto));
     }
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<TaskDto> updateTask(@RequestBody TaskDto taskDto, @RequestParam(name = "id") Long id) {
         return ResponseEntity.ok(taskService.updateTask(taskDto, id));
     }
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteTask(@RequestParam(name = "id") Long id) {
         taskService.deleteTask(id);
         return ResponseEntity.ok("Task deleted successfully");

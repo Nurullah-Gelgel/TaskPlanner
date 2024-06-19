@@ -5,6 +5,7 @@ import com.planner.TaskPlanner.Payload.AssignmentResponse;
 import com.planner.TaskPlanner.Service.AssignmentService;
 import com.planner.TaskPlanner.utils.AppConstants;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,14 +29,17 @@ public class AssignmentController {
         return ResponseEntity.ok(assignmentService.getAssignmentById(id));
     }
     @PostMapping("/create")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AssignmentDto> createAssignment(@RequestBody AssignmentDto assignmentDto) {
         return ResponseEntity.ok(assignmentService.createAssignment(assignmentDto));
     }
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AssignmentDto> updateAssignment(@RequestBody AssignmentDto assignmentDto, @RequestParam(name = "id") Long id) {
         return ResponseEntity.ok(assignmentService.updateAssignment(assignmentDto, id));
     }
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteAssignment(@RequestParam(name = "id") Long id) {
         assignmentService.deleteAssignment(id);
         return ResponseEntity.ok("Assignment deleted successfully");

@@ -6,6 +6,7 @@ import com.planner.TaskPlanner.Payload.UserResponse;
 import com.planner.TaskPlanner.utils.AppConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,6 +20,7 @@ public class UserController {
     }
 
     //create user rest api
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
         return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
@@ -42,12 +44,15 @@ public class UserController {
     }
 
     //update user rest api
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
+
     public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto, @PathVariable(name = "id") Long id) {
         return ResponseEntity.ok(userService.updateUser(userDto, id));
     }
 
     //delete user rest api
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable(name = "id") Long id) {
         userService.deleteUser(id);
